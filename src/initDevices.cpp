@@ -1,20 +1,15 @@
-#include <LiquidCrystal_I2C.h>
 #include <WiFiManager.h>
+#include <LiquidCrystal_I2C.h>
 #include "./helpers/generateRandomString.h"
 #include "./helpers/tokenManager.h"
 #include "./AppConfig.h"
+#include "./devices/lcd.h"
 
-#define I2C_ADDR 0x3F
-#define LCD_COLUMNS 16
-#define LCD_ROWS 2
-
-LiquidCrystal_I2C lcd(I2C_ADDR, LCD_COLUMNS, LCD_ROWS);
 WiFiManager wifiManager;
 unsigned long previousMillis = 0;
 
-void initDevices() {
-  lcd.init();
-  lcd.backlight();
+void initDevices(LiquidCrystal_I2C &lcd) {
+  lcdInit();
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Watering Can");
@@ -59,7 +54,7 @@ void resetData(int eepromAddress, unsigned int tokenLength) {
   ESP.restart();
 }
 
-void disableLcdBacklight(int interval) {
+void disableLcdBacklight(int interval, LiquidCrystal_I2C &lcd) {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;

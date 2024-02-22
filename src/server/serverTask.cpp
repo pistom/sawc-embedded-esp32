@@ -1,12 +1,13 @@
 #include <SSLCert.hpp>
 #include <HTTPSServer.hpp>
-#include "../cert/cert.h"
-#include "../cert/private_key.h"
 #include <HTTPRequest.hpp>
 #include <HTTPResponse.hpp>
 #include "HTTPURLEncodedBodyParser.hpp"
+#include "../cert/cert.h"
+#include "../cert/private_key.h"
 #include "./getParamsFromRequest.h"
 #include "../AppConfig.h"
+#include "../devices/lcd.h"
 
 using namespace httpsserver;
 using namespace std;
@@ -99,10 +100,16 @@ void handleOutput(HTTPRequest * req, HTTPResponse * res) {
       } else if(AppConfig::outputTurnedOn == true) {
         digitalWrite(AppConfig::valvesGpioPins[0], HIGH);
       }
+      lcd.backlight();
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Watering...");
     } else if (action == "off") {
       digitalWrite(AppConfig::valvesGpioPins[outputNumber], LOW);
+      lcd.noBacklight();
       if (nextOutputNumber > 0) {
         digitalWrite(AppConfig::valvesGpioPins[nextOutputNumber], HIGH);
+        lcd.backlight();
         outputNumber = nextOutputNumber;
         nextOutputNumber = -1;
       }

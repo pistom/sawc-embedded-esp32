@@ -6,17 +6,19 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <string>
 #include "./initDevices.h"
 #include "./server/serverTask.h"
 #include "./helpers/turnOffPumpAndValves.h"
 #include "./helpers/tokenManager.h"
 #include "./helpers/generateRandomString.h"
 #include "./AppConfig.h"
-#include <string>
+#include "./devices/lcd.h"
 
 #define EEPROM_SIZE 4096
 #define EEPROM_ADDR_START 0
 unsigned int TOKEN_LENGTH = 8; 
+
 
 void setup()
 {
@@ -31,7 +33,7 @@ void setup()
   }
   AppConfig::token = readStringFromEEPROM(EEPROM_ADDR_START, TOKEN_LENGTH);
 
-  initDevices();
+  initDevices(lcd);
 
   Serial.println("Creating server task... ");
   xTaskCreatePinnedToCore(serverTask, "https443", 6144, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
@@ -41,7 +43,7 @@ void loop()
 {
   // Automatic turn off the pump after watering time
   turnOffPumpAndValves();
-  disableLcdBacklight(10000);
+  disableLcdBacklight(60000, lcd);
 
   if (digitalRead(0) == LOW) {
     Serial.println("Factory reset initiated...");
