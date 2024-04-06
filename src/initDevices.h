@@ -4,6 +4,6 @@
 
 void initDevices(LiquidCrystal_I2C &lcd);
 void resetData(int eepromAddress, unsigned int tokenLength);
-void disableLcdBacklight(int interval, LiquidCrystal_I2C &lcd);
+void disableLcdBacklightAfterTimeout(LiquidCrystal_I2C &lcd);
 
 #endif

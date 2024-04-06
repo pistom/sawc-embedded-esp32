@@ -13,8 +13,8 @@ tuple<string, string, int, int, int, int> getParamsFromRequest(HTTPRequest * req
   string action = "";
   int outputNumber = -1;
   int nextOutputNumber = -1;
-  int duration = -1;
-  int pumpDelayOff = 0;
+  int duration = AppConfig::wateringDuration;
+  int pumpDelayOff = AppConfig::pumpDelayOff;
 
   while(parser.nextField()) {
     string name = parser.getFieldName();

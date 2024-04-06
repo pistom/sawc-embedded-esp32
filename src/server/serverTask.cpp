@@ -47,10 +47,7 @@ void serverTask(void *params) {
 
 void handleRoot(HTTPRequest * req, HTTPResponse * res) {
   res->setHeader("Content-Type", "text/html");
-
-  res->print("Your server is running for ");
-  res->print((int)(millis()/1000), DEC);
-  res->println(" seconds.");
+  res->println("SAWC - WiFi Module");
 }
 
 void handle404(HTTPRequest * req, HTTPResponse * res) {
@@ -104,17 +101,24 @@ void handleOutput(HTTPRequest * req, HTTPResponse * res) {
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Watering...");
-    } else if (action == "off") {
+    }
+    else if (action == "off") {
       digitalWrite(AppConfig::valvesGpioPins[outputNumber], LOW);
-      lcd.noBacklight();
       if (nextOutputNumber > 0) {
         digitalWrite(AppConfig::valvesGpioPins[nextOutputNumber], HIGH);
+        lcd.clear();
         lcd.backlight();
         outputNumber = nextOutputNumber;
         nextOutputNumber = -1;
       }
-      if (outputNumber > 0) {
-        AppConfig::outputTurnedOn = false;
+      else {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Done");
+        AppConfig::backlightTimeout = 10;
+        if (outputNumber > 0){
+          AppConfig::outputTurnedOn = false;
+        }
       }
     }
     res->print("{");

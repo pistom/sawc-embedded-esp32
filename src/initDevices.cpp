@@ -26,9 +26,11 @@ void initDevices(LiquidCrystal_I2C &lcd) {
   lcd.setContrast(255);
   lcd.setCursor(0, 0);
   lcd.print(("AP: " + ap_name).c_str());
+  Serial.println(("AP: " + ap_name).c_str());
   lcd.setCursor(0, 1);
   lcd.print(("PWD: " + ap_pwd).c_str());
-
+  Serial.println(("PWD: " + ap_pwd).c_str());
+  
   if (!wifiManager.autoConnect(ap_name.c_str(), ap_pwd.c_str())) {
     lcd.clear();
     lcd.setCursor(0, 0);
@@ -46,6 +48,8 @@ void initDevices(LiquidCrystal_I2C &lcd) {
   lcd.setCursor(0, 1);
   lcd.print("Token: ");
   lcd.print(AppConfig::token.c_str());
+  Serial.print("Token: ");
+  Serial.println(AppConfig::token.c_str());
 }
 
 void resetData(int eepromAddress, unsigned int tokenLength) {
@@ -54,11 +58,12 @@ void resetData(int eepromAddress, unsigned int tokenLength) {
   ESP.restart();
 }
 
-void disableLcdBacklight(int interval, LiquidCrystal_I2C &lcd) {
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-    delay(1000);
+void disableLcdBacklightAfterTimeout(LiquidCrystal_I2C &lcd) {
+  if (AppConfig::backlightTimeout < 0) {
+    return;
+  }
+  if (AppConfig::backlightTimeout == 0) {
     lcd.noBacklight();
   }
+  AppConfig::backlightTimeout--;
 }

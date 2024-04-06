@@ -21,8 +21,12 @@ ST = BE
 L = Berlin
 O = MyCompany
 CN = myca.local
+[v3_ca]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints = CA:true
 EOF
-openssl req -new -x509 -days 3650 -key exampleca.key -out exampleca.crt -config exampleca.conf
+openssl req -new -x509 -extensions v3_ca -days 3650 -key exampleca.key -out exampleca.crt -config exampleca.conf
 # create serial number file
 echo "01" > exampleca.srl
 

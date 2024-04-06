@@ -17,8 +17,7 @@
 
 #define EEPROM_SIZE 4096
 #define EEPROM_ADDR_START 0
-unsigned int TOKEN_LENGTH = 8; 
-
+unsigned int TOKEN_LENGTH = 8;
 
 void setup()
 {
@@ -28,7 +27,8 @@ void setup()
   EEPROM.begin(EEPROM_SIZE);
 
   // Read token from memory or generate one if not exists
-  if (!isStringStored(EEPROM_ADDR_START, TOKEN_LENGTH)) {
+  if (!isStringStored(EEPROM_ADDR_START, TOKEN_LENGTH))
+  {
     writeStringToEEPROM(EEPROM_ADDR_START, generateRandomString(TOKEN_LENGTH));
   }
   AppConfig::token = readStringFromEEPROM(EEPROM_ADDR_START, TOKEN_LENGTH);
@@ -37,15 +37,19 @@ void setup()
 
   Serial.println("Creating server task... ");
   xTaskCreatePinnedToCore(serverTask, "https443", 6144, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
+  AppConfig::backlightTimeout = 60;
 }
 
 void loop()
 {
-  // Automatic turn off the pump after watering time
-  turnOffPumpAndValves();
-  disableLcdBacklight(60000, lcd);
+  delay(1000);
 
-  if (digitalRead(0) == LOW) {
+  disableLcdBacklightAfterTimeout(lcd);
+  AutomaticTurnOffPumpAndValvesIfNoStopWaterRequest();
+
+  // Reset the device to factory settings
+  if (digitalRead(0) == LOW)
+  {
     Serial.println("Factory reset initiated...");
     resetData(EEPROM_ADDR_START, TOKEN_LENGTH);
   }
