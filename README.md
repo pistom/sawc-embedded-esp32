@@ -1,5 +1,8 @@
 # Hardware
-Diagrams will be added soon.
+
+This example uses 12V solenoid valves and a 5V pump. The valves and the pump are controlled by MOSFETs.
+
+![Wiring Diagram](images/wiring-diagram.svg)
 
 # Instalation
 
