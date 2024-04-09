@@ -75,9 +75,7 @@ void handleOutput(HTTPRequest * req, HTTPResponse * res) {
   }
   string action = get<1>(params);
   int outputNumber = get<2>(params);
-  int nextOutputNumber = get<3>(params);
-  AppConfig::wateringDuration = get<4>(params);
-  AppConfig::pumpDelayOff = get<5>(params);
+
   
   if (outputNumber == -1) {
     res->setStatusCode(404);
@@ -88,19 +86,23 @@ void handleOutput(HTTPRequest * req, HTTPResponse * res) {
     res->print("\",");
     res->print("\"error\": \"No output found\"");
     res->print("}");
-  } else { 
-    pinMode(AppConfig::valvesGpioPins[outputNumber], OUTPUT);
+  } 
+  // Manage valves
+  else if (outputNumber > 0) {
+    int nextOutputNumber = get<3>(params);
+    AppConfig::wateringDuration = get<4>(params);
+    AppConfig::pumpDelayOff = get<5>(params);
+
     if (action == "on") {
-      if (outputNumber > 0) {
-        AppConfig::outputTurnedOn = true;
-        digitalWrite(AppConfig::valvesGpioPins[outputNumber], HIGH);
-      } else if(AppConfig::outputTurnedOn == true) {
-        digitalWrite(AppConfig::valvesGpioPins[0], HIGH);
-      }
+      AppConfig::outputTurnedOn = true;
+      digitalWrite(AppConfig::valvesGpioPins[outputNumber], HIGH);
       lcd.backlight();
       lcd.clear();
       lcd.setCursor(0, 0);
       lcd.print("Watering...");
+      lcd.setCursor(0, 1);
+      lcd.print("Valve: ");
+      lcd.print(outputNumber);
     }
     else if (action == "off") {
       digitalWrite(AppConfig::valvesGpioPins[outputNumber], LOW);
@@ -109,22 +111,41 @@ void handleOutput(HTTPRequest * req, HTTPResponse * res) {
         lcd.clear();
         lcd.backlight();
         outputNumber = nextOutputNumber;
+        AppConfig::wateringDuration = 3;
         nextOutputNumber = -1;
       }
       else {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("Done");
+        AppConfig::wateringDuration = -1;
         AppConfig::backlightTimeout = 10;
-        if (outputNumber > 0){
-          AppConfig::outputTurnedOn = false;
-        }
+        AppConfig::outputTurnedOn = false;
       }
     }
     res->print("{");
     res->print("\"output\": \"");
     res->print(outputNumber);
     res->print("\",");
+    res->print("\"action\": \"");
+    if (action == "on") {
+      res->print("on");
+    } else if (action == "off") {
+      res->print("off");
+    }
+    res->print("\"");
+    res->print("}");
+  } 
+  // Manage pump
+  else if (outputNumber == 0) { 
+    if (action == "on" && AppConfig::outputTurnedOn == true) {
+      digitalWrite(AppConfig::valvesGpioPins[0], HIGH);
+    } else if (action == "off") {
+      digitalWrite(AppConfig::valvesGpioPins[0], LOW);
+      AppConfig::pumpDelayOff = 0;
+    }
+    res->print("{");
+    res->print("\"output\": \"pump\"");
     res->print("\"action\": \"");
     if (action == "on") {
       res->print("on");

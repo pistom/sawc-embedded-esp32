@@ -4,11 +4,6 @@
 
 void AutomaticTurnOffPumpAndValvesIfNoStopWaterRequest() {
   if (AppConfig::outputTurnedOn) {
-    Serial.print("Duration: ");
-    Serial.println(AppConfig::wateringDuration);
-    Serial.print("Delay: ");
-    Serial.println(AppConfig::pumpDelayOff);
-    Serial.println("################");
     if (AppConfig::wateringDuration < (-2 - AppConfig::pumpDelayOff)) {
       for (int i : AppConfig::valvesGpioPins) {
         digitalWrite(i, LOW);

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-int AppConfig::valvesGpioPins[AppConfig::valvesNumber] = { 23, 32, 33, 25, 26, 27 };
+int AppConfig::valvesGpioPins[AppConfig::valvesNumber] = { 23, 19, 18, 5, 17, 16, 32, 33, 25, 26, 27 };
 bool AppConfig::outputTurnedOn = false;
 int AppConfig::wateringDuration = -1;
 int AppConfig::pumpDelayOff = 0;

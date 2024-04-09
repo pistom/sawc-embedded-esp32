@@ -7,7 +7,7 @@ class AppConfig
 {
 public:
     static std::string token;
-    static const int valvesNumber = 6;
+    static const int valvesNumber = 11;
     static int valvesGpioPins[valvesNumber]; // First value is pump pin number
     static bool outputTurnedOn;
     static int wateringDuration;

@@ -35,6 +35,11 @@ void setup()
 
   initDevices(lcd);
 
+  // Initialize the GPIO pins
+  for (int outputNumber = 0; outputNumber < AppConfig::valvesNumber; outputNumber++) {
+    pinMode(AppConfig::valvesGpioPins[outputNumber], OUTPUT);
+  }
+
   Serial.println("Creating server task... ");
   xTaskCreatePinnedToCore(serverTask, "https443", 6144, NULL, 1, NULL, ARDUINO_RUNNING_CORE);
   AppConfig::backlightTimeout = 60;
