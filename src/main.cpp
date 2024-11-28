@@ -51,6 +51,7 @@ void loop()
 
   disableLcdBacklightAfterTimeout(lcd);
   AutomaticTurnOffPumpAndValvesIfNoStopWaterRequest();
+  checkWiFiConnection();
 
   // Reset the device to factory settings
   if (digitalRead(0) == LOW)
