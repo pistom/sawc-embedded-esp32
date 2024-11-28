@@ -67,3 +67,14 @@ void disableLcdBacklightAfterTimeout(LiquidCrystal_I2C &lcd) {
   }
   AppConfig::backlightTimeout--;
 }
+
+void checkWiFiConnection() {
+  if (WiFi.status() != WL_CONNECTED) {
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= 5000) {
+      previousMillis = currentMillis;
+      Serial.println("WiFi connection lost. Attempting to reconnect...");
+      WiFi.reconnect();
+    }
+  }
+}
